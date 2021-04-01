@@ -91,7 +91,6 @@ class searching
         {
             echo "string";
         }
-
         foreach ($query_data as $key => $value_q)
         {   
             if(!empty($data['string']))
@@ -124,7 +123,6 @@ class searching
             }
 
         }
-           
         $data['sub_querys']=$query_array;
         $data['get_ids']=$get_ids;
         $string_query=implode(' UNION ', $query_array); 
@@ -220,17 +218,17 @@ class searching
                if($value=='')
                {
                     $value_id="".$string_ids."";
-                    array_push($append_id, "table_name_".$key.".".$key." IN (".$value_id.")");
+                    array_push($append_id, "mock_test_tbl.".$key." IN (".$value_id.")");
                }
                
             }
             if($value!='')
             {
-               array_push($append_string_id, "table_name_".$key.".".$key." IN (".$value.")"); 
+               array_push($append_string_id, "mock_test_tbl.".$key." IN (".$value.")"); 
             }
         }
         //if()
-        if($Final_date!=0)
+      /*  if($Final_date!=0)
         {
            array_push($append_string_id, "table_name_date.select_column LIKE '%".$Final_date."%'"); 
              
@@ -249,7 +247,7 @@ class searching
         {
             array_push($append_string_id, "table_name_date.select_column BETWEEN '".$this->date_filter['month_from']."' AND '".$this->date_filter['month_to']."'"); 
         }  
-
+*/
         if(!empty($append_id))
         {
         
@@ -284,7 +282,7 @@ class searching
                 if(isset($result[$key][$get_ids[$i]]))
                 {   
                     $ids[$get_ids[$i]][$key][$get_ids[$i]]=$result[$key][$get_ids[$i]];
-                    $ids[$get_ids[$i]][$key]['name']=$result[$key]['name'];
+                    $ids[$get_ids[$i]][$key]['name']=$result[$key]['Name'];
                 }      
             } 
 
@@ -353,7 +351,8 @@ class searching
         $new_ids=implode(",",$new_ids);
 
         return $new_ids;
-    }    
+    }  
+
        
 }
 ?>

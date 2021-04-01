@@ -1,15 +1,15 @@
 <?php
 
-	require_once('/Applications/MAMP/htdocs/Mock_test_1/search_library/search.php');
+	require_once('/xampp/htdocs/Mock_test/search_library/search.php');
 
-	require_once('/Applications/MAMP/htdocs/Mock_test_1/pagination1.0/prepared_query.php');
+	require_once('/xampp/htdocs/Mock_test/pagination1.0/prepared_query.php');
 
 
 	$application_obj = new ManageApp();
 
 	$connection_mock_chat = NULL;
 
-	$application_obj->Myconnection ($connection_mock_chat,"localhost","root","Mock_test_db");
+	$application_obj->Myconnection ($connection_mock_chat,"localhost","","Mock_test_db");
 	$table_heading_name=array('Name','Email','Phone Number','Gender');
 	$table_column_name=array('name','email','phoneNum','gender');
 	$where=1;
@@ -44,7 +44,11 @@
 	    $response_data=array();
 	    $obj=new searching($input,$connection_mock_chat);
 	    $keys=array('type','table_name','search_col_name','get_colms','get_id');
-	    $value=array(array('string','login_db.mock_test_tbl','name','null as name,id,null as email,null as phone,null as gender','id'));
+		$value=array(array('string','mock_test_db.mock_test_tbl','Name','Name,Id,Email,Phone,Gender','Id'));
+		if ( $application_obj->checkEmail($input) ) {
+		   $value=array(array('email','mock_test_db.mock_test_tbl','Email','Name,Id,Email,Phone,Gender','Id'));
+		}
+	   
 	    $query_data=array();
 
 	    foreach ($value as $key => $value1) 
@@ -66,7 +70,7 @@
 	    $where_data=$obj->searching_data($get_ids);
 
 	    $table_from=array("table_name_id","table_name_email");
-	    $table1_to=array("login_db.mock_test_tbl","login_db.mock_test_tbl");
+	    $table1_to=array("mock_test_db.mock_test_tbl","mock_test_db.mock_test_tbl");
 	    $tble1=str_replace($table_from, $table1_to, $where_data);
 
 	    if($tble1=='')
@@ -77,7 +81,6 @@
 	    else
 	    {
 	        $where=$tble1;
-
 	        $total_data=$application_obj->total_data($connection_mock_chat,$buffer_range,$data_per_page,$where);
 	        $response_data['total_length']=$total_data['total_length'];
 	        $response_data['total_data']=$total_data['total_data'];
@@ -97,7 +100,7 @@
 
 	        $user='root';
 
-			$connection= mysqli_connect ($host, $user, "root" , $db); 
+			$connection= mysqli_connect ($host, $user, "" , $db); 
 			if (!$connection) 
 			{
 				die ( "no connection found" . mysqli_error($connection));
@@ -182,10 +185,10 @@
 	        $max_page=ceil($total_length/$data_per_page);
 		        
 		    $query="SELECT * FROM mock_test_tbl WHERE ".$where."  LIMIT ?,?";
-		    	
 		    $params = array($data_from,$data_to);
 
         	$extra_slots_entry= mysqli_prepared_query($connection_mock_chat,$query,"ii",$params);
+			
 		        if($extra_slots_entry)
 		        {
 		            foreach ($extra_slots_entry as $val)
@@ -193,10 +196,10 @@
 		                $res_here=$val;
 		                $res_here['max_page']=$max_page;
 		                $res_here['total_length'] =$total_length;
-		                $Name=$val['name'];
-		                $Email=$val['email'];
-		                $phoneNum=$val['phone'];
-		                $Gender=$val['gender'];
+		                $Name=$val['Name'];
+		                $Email=$val['Email'];
+		                $phoneNum=$val['Phone'];
+		                $Gender=$val['Gender'];
 		                $res_here['name']=$Name;
 		                $res_here['email']=$Email;
 		                $res_here['phoneNum']=$phoneNum;
@@ -206,6 +209,12 @@
 		        } 
 		        return $response;
 		}
+		function checkEmail($email) {
+		   $find1 = strpos($email, '@');
+		   $find2 = strpos($email, '.');
+		   return ($find1 !== false && $find2 !== false && $find2 > $find1);
+		}
+
 
 	}
 ?>
